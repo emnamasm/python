@@ -30,4 +30,6 @@ class Conferences(models.Model):
                 check=models.Q(
                     start_date__gte=timezone.now().date(),
                    ), name="the start date must be greater than today or equal")]
+    def __str__(self):
+            return f"title conference = {self.title} et la localisation est {self.location}"
 

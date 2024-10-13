@@ -25,12 +25,16 @@ class Participant(AbstractUser):
     )
     participant_category=models.CharField(max_length=255,choices=CHOICES)
     #related_name='Reservation' : Cela permet d'accéder aux réservations d'un participant à partir d'une instance de Conferences avec conferences_instance.Reservation.all().
+
     reservations=models.ManyToManyField(Conferences,through='Reservation',related_name='Reservation')
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     class Meta:
         # Permet de définir la façon dont le nom du modèle est affiché dans l'interface d'administration de Django au pluriel.
         verbose_name_plural="Participants"
+    def __str__(self):
+            return f"le cin du participant et le username = {self.cin} et le username est {self.username}"
+
 
 
 class Reservation(models.Model):
@@ -43,10 +47,12 @@ class Reservation(models.Model):
             raise ValidationError('you can only reserve from upcomming conference')
         reservation_count=Reservation.objects.filter(
             participant=self.participant,
-            reservation_date=self.reservation_date
+            reservation_date__date=timezone.now().date()
         )
-        if reservation_count>=3:
-            raise ValidationError("you can only make up to 3 reservations per day")
+
+
+        if reservation_count.count()>=2:
+            raise ValidationError("you can only make up to 2 reservations per day")
     class Meta:
         unique_together=('conference','participant')
 
