@@ -41,20 +41,28 @@ class ParticipantFilter(admin.SimpleListFilter):
             ('0',('no participants')),
             ('more',('More participants'))
         )
+    """
     def queryset(self, request, queryset):
         #bch nchouf l conference ili mafihomch participants
         if self.value()=='0' :
             return queryset.annotate(participant_count=Count('Reservation')).filter(participant_count=0)
-        
         if self.value()=='more':   
             return queryset.annotate(participant_count=Count('Reservation')).filter(participant_count__gt=0)
         return queryset
-    
+    """
+    def queryset(self, request, queryset):
+        #bch nchouf l conference ili mafihomch participants
+        if self.value()=='0' :
+            return queryset.filter(Reservation__isnull=True)
+        if self.value()=='more':   
+            return queryset.filter(Reservation__isnull=False)
+        return queryset
      
 class ConferenceAdmin(admin.ModelAdmin):
     list_display=('title' ,'location','start_date','end_date','price')
     search_fields=('title',)
     list_per_page=2
+    #pour un ordre inverse on fait  ordering=('-start_date') 
     ordering=('start_date','title')
     fieldsets= (
         ('description',{
@@ -69,6 +77,6 @@ class ConferenceAdmin(admin.ModelAdmin):
     )
     readonly_fields=('created_at','updated_at')
     inlines=[ReservationInline]
-    autocomplete_fields=('category',)
+    autocomplete_fields=('category',)#voir admin categorie
     list_filter=('title',ParticipantFilter,ConferenceDateFilter)
 admin.site.register(Conferences,ConferenceAdmin)

@@ -1,0 +1,15 @@
+<h1>liste des conferences</h1>
+{% for c in conferences %}
+<fieldset>
+    <legend>{{c.title}}</legend>
+    <p>description: {{c.description}}</p>
+    <p>start_date: {{c.start_date}}</p>
+    <p>end_date: {{c.end_date}}</p>
+    <p>price: {{c.price}}</p>
+
+    <a href="{%url 'detailConf' c.id %}">details</a>
+    
+</fieldset>
+{% empty %}
+<p>la liste des conferences est vide</p>
+{% endfor %}

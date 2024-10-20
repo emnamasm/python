@@ -12,7 +12,7 @@ def email_validator(value):
 class Participant(AbstractUser):
     cin_validator=RegexValidator(regex=r'^\d{8}$',message="this field must contain exactly 8 digits")
     cin=models.CharField(primary_key=True,max_length=8,validators=[cin_validator])
-    email= models.EmailField(unique=True,max_length=255,validators=[email_validator])
+    email= models.EmailField(unique=True,max_length=255,validators=[email_validator],help_text='Entrez une adresse e-mail valide.')
     first_name=models.CharField(max_length=255)
     last_name=models.CharField(max_length=255)
     username=models.CharField(max_length=255,unique=True)
@@ -26,14 +26,14 @@ class Participant(AbstractUser):
     participant_category=models.CharField(max_length=255,choices=CHOICES)
     #related_name='Reservation' : Cela permet d'accéder aux réservations d'un participant à partir d'une instance de Conferences avec conferences_instance.Reservation.all().
 
-    reservations=models.ManyToManyField(Conferences,through='Reservation',related_name='Reservation')
-    created_at=models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now=True)
+    reservations=models.ManyToManyField(Conferences,through='Reservation',related_name='Reservation')#d ns related name il faut utiliser nom en miniscule
+    created_at=models.DateTimeField(auto_now_add=True,null=True)
+    updated_at=models.DateTimeField(auto_now=True,null=True)
     class Meta:
         # Permet de définir la façon dont le nom du modèle est affiché dans l'interface d'administration de Django au pluriel.
         verbose_name_plural="Participants"
     def __str__(self):
-            return f"le cin du participant et le username = {self.cin} et le username est {self.username}"
+            return f"le cin du participant est {self.cin} et le username est {self.username}"
 
 
 
